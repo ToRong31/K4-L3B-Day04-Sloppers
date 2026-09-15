@@ -85,6 +85,18 @@ tools:
         max_results: {type: integer, default: 3, description: "Số kết quả, tối đa 5"}
       required: [manufacturer, model, query_type]
 
+  - name: search_security_advisories
+    description: "Tìm cảnh báo bảo mật/CVE công khai mới nhất cho sản phẩm hoặc thành phần phần mềm/firmware. Chỉ truyền hãng, sản phẩm, component và phiên bản công khai; không truyền asset ID, employee ID, hostname, serial, IP, log, credential hoặc nội dung ticket. Chỉ dùng khi người dùng hỏi lỗ hổng, CVE, security advisory hoặc phiên bản bị ảnh hưởng; kết quả web là bằng chứng tham khảo, không tự cho phép cập nhật hay tạo ticket."
+    parameters:
+      type: object
+      properties:
+        manufacturer: {type: string, description: "Hãng công khai, ví dụ Lenovo hoặc Microsoft"}
+        product: {type: string, description: "Tên sản phẩm/model công khai, ví dụ ThinkPad T14 Gen 4"}
+        component: {type: string, enum: [bios, firmware, driver, operating_system, application, all], default: "all", description: "Thành phần công khai cần kiểm tra"}
+        version: {type: string, default: "", description: "Phiên bản công khai nếu người dùng đã cung cấp, ví dụ 1.35; không truyền serial, asset ID hay hostname"}
+        max_results: {type: integer, default: 3, description: "Số kết quả, từ 1 đến 5"}
+      required: [manufacturer, product]
+
   - name: policy
     description: "Tìm trong chính sách IT nội bộ."
     parameters:
@@ -105,4 +117,3 @@ tools:
         asset_id: {type: string, default: "", description: "Mã tài sản nếu có"}
         confirmed: {type: boolean, default: false, description: "Đã được người dùng xác nhận rõ ràng"}
       required: [summary]
-
