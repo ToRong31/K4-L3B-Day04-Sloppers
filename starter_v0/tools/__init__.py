@@ -15,6 +15,7 @@ from .policy.tool import search_company_policy
 from .search_kb.tool import search_kb
 from .search_device_info.tool import search_device_info
 from .search_security_advisories.tool import search_security_advisories
+from .meeting_room.tool import meeting_room
 
 
 # These names are part of the fixed evaluation contract. Keep built-in names
@@ -32,6 +33,7 @@ TOOL_FUNCTIONS = {
     "format_incident_report": format_incident_report,
     "policy": search_company_policy,
     "create_ticket": create_ticket,
+    "meeting_room": meeting_room,
 }
 
 

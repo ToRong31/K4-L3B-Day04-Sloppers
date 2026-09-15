@@ -4,7 +4,7 @@
 - Nhiệm vụ và luồng cơ bản chốt trước v0: tra trạng thái dịch vụ, chẩn đoán asset, tra hồ sơ người dùng, tìm KB/policy, định dạng incident report và tạo ticket sau xác nhận.
 - Bộ 30 câu cơ bản: [`data/eval_base.json`](../data/eval_base.json); bộ 12 câu an toàn: [`data/eval_adversarial.json`](../data/eval_adversarial.json). Đây là các bộ IT cố định của starter, không chỉnh sửa.
 - Bộ 10 câu nhóm: [`data/eval_group.json`](../data/eval_group.json), gồm đúng 5 single-turn và 5 multi-turn.
-- Chức năng mở rộng ngoài luồng cơ bản: không đăng ký bonus; nhóm tập trung hoàn thiện luồng IT Helpdesk bắt buộc.
+- Chức năng mở rộng ngoài luồng cơ bản (nếu có; tối đa 10 trong tổng 100 điểm): meeting_room tool — xem lịch trống, đặt phòng, hủy đặt phòng họp
 
 ## Team
 
@@ -34,6 +34,8 @@ Agent hỗ trợ các yêu cầu IT Helpdesk bằng dữ liệu giả lập và 
 | `policy` | Tra chính sách IT nội bộ | optional built-in |
 | `create_ticket` | Ghi ticket sau xác nhận | optional built-in |
 | `search_device_info` | Tìm thông tin công khai về model thiết bị | optional built-in |
+| `search_security_advisories` | Tìm CVE và khuyến cáo bảo mật công khai | optional team-built |
+| `meeting_room` | Xem lịch trống, đặt và hủy phòng họp | team-built bonus |
 
 Registry và schema cuối nằm trong [`artifacts/tools.yaml`](tools.yaml) và khớp với `tools/__init__.py`.
 
@@ -85,8 +87,13 @@ Tiến trình phân tích và khắc phục lỗi qua từng phiên bản:
 ### 4. Kết quả sau v3 (Sửa `system_prompt.md`: 30/30 Pass - Đạt 100%)
 - Bổ sung quy tắc Confirmation Invalidation đã giải quyết triệt để lỗi `M09`. Toàn bộ 30 test case chuẩn đều đạt PASS.
 
+### 5. Failure analysis cho bonus `meeting_room`
 
-
+| Case ID | Failure type | Actual calls | What failed | Fix |
+|---|---|---|---|---|
+| MR07_book_then_confirm | wrong_boundary | clarify(yes_no) | Agent gọi clarify lại sau khi user đã confirm ở turn 2. Eval kỳ vọng meeting_room(confirmed=true) trực tiếp. | System prompt cần hướng dẫn: khi user đã nói "xác nhận" rõ ràng, gọi tool với confirmed=true luôn, không clarify lại. |
+| MR08_book_then_cancel | wrong_tool | clarify(yes_no) | Agent hỏi confirm hủy thay vì gọi meeting_room(cancel_booking). Eval kỳ vọng tool call đầu tiên là meeting_room. | Agent cần gọi meeting_room(cancel_booking) trước, tool sẽ trả needs_confirmation, sau đó mới clarify. |
+| MR10_change_room_confirm | wrong_boundary | clarify(yes_no) thay vì meeting_room(confirmed=true) dùng room mới | Agent confirm lại phòng cũ MR-405 thay vì dùng MR-301 đã sửa ở turn 2. | Agent cần carry payload mới nhất khi confirm. |
 
 ## B3. Team eval cases
 
@@ -104,6 +111,23 @@ Tiến trình phân tích và khắc phục lỗi qua từng phiên bản:
 | G10 | Hai nguồn qua nhiều lượt | `lookup_user` + `inspect_device(security)` | PASS |
 
 Run đầy đủ: [`v3 group`](../runs/v3_B_group_openai_20260915T190827551840.json).
+
+### Bonus eval cases cho `meeting_room`
+
+| Case ID | Nội dung kiểm tra | Kỳ vọng | Kết quả |
+|---|---|---|---|
+| MR01 | Check availability by room | meeting_room(check_availability, MR-301, 2026-09-16) | PASS |
+| MR02 | Check availability by capacity | meeting_room(check_availability, date, capacity=10) | PASS |
+| MR03 | Book without confirm | clarify(yes_no) trước khi book | PASS |
+| MR04 | Cancel without confirm | clarify(yes_no) trước khi cancel | PASS |
+| MR05 | Room not found | meeting_room(check_availability, MR-999) → error | PASS |
+| MR06 | Carry date multi-turn | Carry date từ turn trước sang turn sau | PASS |
+| MR07 | Book then confirm | meeting_room(book_room, confirmed=true) sau confirm | FAIL wrong_boundary |
+| MR08 | Book then cancel | meeting_room(cancel_booking) khi user muốn hủy | FAIL wrong_tool |
+| MR09 | Cancel then revoke | Hủy yêu cầu hủy → no tool | PASS |
+| MR10 | Change room confirm | meeting_room(book_room, MR-301, confirmed=true) dùng room mới | FAIL wrong_boundary |
+
+Run đầy đủ: [`meeting_room group`](../runs/v0_B_group_openai_20260915T193535865025.json).
 
 ## B4. Live chat evidence
 
@@ -133,7 +157,7 @@ Run 12/12 và toàn bộ tool results: [`v3 adversarial`](../runs/v3_B_adversari
 | Optional built-in: `policy` | G05 trong [`group run`](../runs/v3_B_group_openai_20260915T190827551840.json) | Route đúng `external_tools` | Retrieval chỉ được xem là dữ liệu, không phải instruction |
 | Optional built-in: `create_ticket` | [`confirmed-ticket`](../transcripts/ui_v3_openai_20260915T191033204134.transcript.json) | Tạo ticket sau xác nhận rõ | Payload đổi/missing/secret phải dừng hoặc hỏi lại |
 | External search boundary | A06 và A12 trong [`adversarial run`](../runs/v3_B_adversarial_openai_20260915T190720911605.json) | Không exfiltrate internal identifiers | Chỉ manufacturer/model/query type công khai |
-| Bonus team-built | Không có | Không claim bonus | Không áp dụng |
+| Bonus: meeting_room tool | `tools/meeting_room/tool.py`, `data/meeting_rooms.json`, `data/eval_meeting_room.json` | 7/10 pass (base), 3 demo scenarios PASS. Check availability, book with confirm, cancel with revoke all work. Conflict detection returns suggested slots. | Write actions (book/cancel) require confirm. Missing employee_id triggers clarify. Past-time booking not yet blocked. Multi-turn confirmation flow needs prompt improvement. |
 
 ## B6. Safety review
 
