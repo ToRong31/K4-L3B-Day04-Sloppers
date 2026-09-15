@@ -6,3 +6,6 @@ google-genai>=0.8.0
 PyYAML>=6.0
 # Optional external device search:
 requests>=2.31.0
+# Modern web UI and local API server:
+fastapi>=0.110.0,<1.0.0
+uvicorn[standard]>=0.27.0,<1.0.0
