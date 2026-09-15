@@ -5,21 +5,32 @@
       "name": "Vinpearl",
       "floor": 2,
       "capacity": 4,
-      "equipment": ["whiteboard"]
+      "equipment": [
+        "whiteboard"
+      ]
     },
     {
       "room_id": "MR-301",
       "name": "Vinfast",
       "floor": 3,
       "capacity": 8,
-      "equipment": ["projector", "whiteboard", "video_conference"]
+      "equipment": [
+        "projector",
+        "whiteboard",
+        "video_conference"
+      ]
     },
     {
       "room_id": "MR-405",
       "name": "Vinhomes",
       "floor": 4,
       "capacity": 20,
-      "equipment": ["projector", "whiteboard", "video_conference", "speaker"]
+      "equipment": [
+        "projector",
+        "whiteboard",
+        "video_conference",
+        "speaker"
+      ]
     }
   ],
   "bookings": [
@@ -45,6 +56,14 @@
       "employee_id": "EMP-1007",
       "date": "2026-09-16",
       "time_slot": "10:00-12:00",
+      "status": "confirmed"
+    },
+    {
+      "booking_id": "BK-8B03",
+      "room_id": "MR-301",
+      "employee_id": "EMP-1003",
+      "date": "2026-09-16",
+      "time_slot": "10:00-11:00",
       "status": "confirmed"
     }
   ]

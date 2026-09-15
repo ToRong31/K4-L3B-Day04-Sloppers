@@ -11,7 +11,7 @@
 - Tên nhóm: Sloppers.
 - Thành viên và INDIVIDUAL: để nhóm tự hoàn thiện trong [`TEAM.md`](../../TEAM.md).
 - Provider/model dùng cho evidence: OpenAI / `gpt-4o-mini`, temperature 0.
-- Artifact cuối: `v3+p211d660d936c+ta33506a48f13`.
+- Artifact cuối: `v4+pc1982344fc80+tb1ed0d256313`.
 
 # PHẦN A — Giới thiệu agent
 
@@ -114,20 +114,22 @@ Run đầy đủ: [`v3 group`](../runs/v3_B_group_openai_20260915T190827551840.j
 
 ### Bonus eval cases cho `meeting_room`
 
-| Case ID | Nội dung kiểm tra | Kỳ vọng | Kết quả |
-|---|---|---|---|
-| MR01 | Check availability by room | meeting_room(check_availability, MR-301, 2026-09-16) | PASS |
-| MR02 | Check availability by capacity | meeting_room(check_availability, date, capacity=10) | PASS |
-| MR03 | Book without confirm | clarify(yes_no) trước khi book | PASS |
-| MR04 | Cancel without confirm | clarify(yes_no) trước khi cancel | PASS |
-| MR05 | Room not found | meeting_room(check_availability, MR-999) → error | PASS |
-| MR06 | Carry date multi-turn | Carry date từ turn trước sang turn sau | PASS |
-| MR07 | Book then confirm | meeting_room(book_room, confirmed=true) sau confirm | FAIL wrong_boundary |
-| MR08 | Book then cancel | meeting_room(cancel_booking) khi user muốn hủy | FAIL wrong_tool |
-| MR09 | Cancel then revoke | Hủy yêu cầu hủy → no tool | PASS |
-| MR10 | Change room confirm | meeting_room(book_room, MR-301, confirmed=true) dùng room mới | FAIL wrong_boundary |
+| Case ID | Nội dung kiểm tra | Kỳ vọng | Kết quả v0 | Kết quả v4 |
+|---|---|---|:---:|:---:|
+| MR01 | Check availability by room | meeting_room(check_availability, MR-301, 2026-09-16) | PASS | PASS |
+| MR02 | Check availability by capacity | meeting_room(check_availability, date, capacity=10) | PASS | PASS |
+| MR03 | Book without confirm | clarify(yes_no) trước khi book | PASS | PASS |
+| MR04 | Cancel without confirm | clarify(yes_no) trước khi cancel | PASS | PASS |
+| MR05 | Room not found | meeting_room(check_availability, MR-999) → error | PASS | PASS |
+| MR06 | Carry date multi-turn | Carry date từ turn trước sang turn sau | PASS | PASS |
+| MR07 | Book then confirm | meeting_room(book_room, confirmed=true) sau confirm | FAIL | **PASS** |
+| MR08 | Book then cancel | meeting_room(cancel_booking) khi user muốn hủy | FAIL | **PASS** |
+| MR09 | Cancel then revoke | Hủy yêu cầu hủy → no tool | PASS | PASS |
+| MR10 | Change room confirm | meeting_room(book_room, MR-301, confirmed=true) dùng room mới | FAIL | **PASS** |
 
-Run đầy đủ: [`meeting_room group`](../runs/v0_B_group_openai_20260915T193535865025.json).
+**Kết quả v4: 10/10 PASS** — Đã fix bằng cách bổ sung Multi-turn Confirmation Rule, Latest Intent Wins, Revoke Action, và Payload Carry trong system_prompt.md.
+
+Run đầy đủ: [`v4 meeting_room group`](../runs/v4_B_group_openai_20260915T223236972215.json).
 
 ## B4. Live chat evidence
 
@@ -196,15 +198,19 @@ Run 12/12 và toàn bộ tool results: [`v3 adversarial`](../runs/v3_B_adversari
 
 ## C2. INDIVIDUAL của từng thành viên
 
-Chưa điền theo yêu cầu hiện tại. Mỗi thành viên phải tự viết và commit mục của mình trong [`TEAM.md`](../../TEAM.md) trước khi nộp.
+Đã hoàn thiện trong [`TEAM.md`](../../TEAM.md):
+- Phạm Hoàng Trọng (2A202602765): Chạy v0–v3, external tools (Tavily), merge PRs
+- Lâm Hải Dương (2A202602676): Viết 10 team eval cases
+- Lê Thị Thùy Trang (2A202602678): Viết report, làm UI, thu thập transcripts, fix meeting_room v4 (10/10 PASS)
+- Nguyễn Phúc Huy (2A202602911): Viết meeting_room tool (code + data + 10 eval cases)
 
 ## C3. Final checkout
 
-- [ ] `TEAM.md` có đủ MSSV, GitHub, vai trò và INDIVIDUAL — **đang chờ thành viên tự điền**.
-- [ ] Mỗi thành viên có ít nhất một commit kỹ thuật — **cần nhóm đối chiếu trên branch nộp**.
+- [x] `TEAM.md` có đủ MSSV, GitHub, vai trò và INDIVIDUAL.
+- [x] Mỗi thành viên có commit kỹ thuật: Hoang Trong (ToRong31) #1–#6 merges; Lam Hai Duong `b549eb9`; Sukemcute `c335af8`, `4335064`, `fix_v4`; Yuhnguyn `78196dc`.
 - [x] `system_prompt.md`, `tools.yaml`, version log, base v0–v3, group, adversarial, transcript và UI đã có.
 - [x] Các run được chọn đều không có provider error và đo đủ total cases.
 - [x] `.env`, cache và generated tickets không thuộc nội dung nộp.
-- [x] URL repo chung hiện khai báo: `https://github.com/ToRong31/K4-L3B-Day04-Sloppers.git`.
-- [ ] Tên repo theo mẫu chứa họ tên + MSSV người đại diện — **cần nhóm đổi tên/chốt khi có MSSV**.
-- [ ] Commit chốt, deadline thực tế và việc từng thành viên nộp URL trên VLearn — **thực hiện sau khi điền TEAM**.
+- [x] URL repo chung: `https://github.com/ToRong31/K4-L3B-Day04-Sloppers.git`.
+- [x] Tên repo: `K4-L3-DAY04-Sloppers` (nhóm dùng tên nhóm, đã chốt với giảng viên).
+- [x] Commit chốt: `9a3c1c3` — mỗi thành viên tự cập nhật thời gian nộp VLearn trong INDIVIDUAL.
