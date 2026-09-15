@@ -14,6 +14,7 @@ from .lookup_user.tool import lookup_user
 from .policy.tool import search_company_policy
 from .search_kb.tool import search_kb
 from .search_device_info.tool import search_device_info
+from .search_security_advisories.tool import search_security_advisories
 
 
 # These names are part of the fixed evaluation contract. Keep built-in names
@@ -24,6 +25,7 @@ TOOL_FUNCTIONS = {
     "clarify": ask_user,
     "search_kb": search_kb,
     "search_device_info": search_device_info,
+    "search_security_advisories": search_security_advisories,
     "check_service_status": check_service_status,
     "inspect_device": inspect_device,
     "lookup_user": lookup_user,

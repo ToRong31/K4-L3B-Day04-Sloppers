@@ -9,8 +9,9 @@ tags: [external tool, web search, privacy, manufacturer, model, asset]
 
 ## Allowed public fields
 
-- Manufacturer and public model name may be sent to an approved web-search provider.
-- Public query type such as specifications, drivers, compatibility, or support may be included.
+- Manufacturer and public model/product name may be sent to an approved web-search provider.
+- Public query type such as specifications, drivers, compatibility, support, CVE, or security advisory may be included.
+- A public software, driver, BIOS, or firmware version may be included only when it contains no internal identifier.
 
 ## Restricted internal fields
 

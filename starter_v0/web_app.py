@@ -65,6 +65,13 @@ QUICK_ACTIONS = [
         "prompt": "Tìm hướng dẫn cấu hình Outlook profile trên Windows 11.",
     },
     {
+        "id": "security-advisory",
+        "icon": "shield",
+        "title": "Cảnh báo bảo mật",
+        "description": "Tra CVE công khai cho thiết bị",
+        "prompt": "Kiểm tra các CVE và security advisory công khai cho Lenovo ThinkPad T14 Gen 4, BIOS version 1.35.",
+    },
+    {
         "id": "ticket",
         "icon": "ticket",
         "title": "Tạo ticket",
