@@ -213,4 +213,4 @@ Run 12/12 và toàn bộ tool results: [`v3 adversarial`](../runs/v3_B_adversari
 - [x] `.env`, cache và generated tickets không thuộc nội dung nộp.
 - [x] URL repo chung: `https://github.com/ToRong31/K4-L3B-Day04-Sloppers.git`.
 - [x] Tên repo: `K4-L3-DAY04-Sloppers` (nhóm dùng tên nhóm, đã chốt với giảng viên).
-- [x] Commit chốt: `9a3c1c3` — mỗi thành viên tự cập nhật thời gian nộp VLearn trong INDIVIDUAL.
+- [x] Commit chốt: `6e9d567` — mỗi thành viên tự cập nhật thời gian nộp VLearn trong INDIVIDUAL.
