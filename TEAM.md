@@ -8,7 +8,7 @@
 - Người đại diện / MSSV: Phạm Hoàng Trọng — 2A202602765
 - Tên repo: `K4-L3-DAY04-Sloppers`
 - URL repo, nhánh nộp, commit chốt: `https://github.com/ToRong31/K4-L3B-Day04-Sloppers.git`, nhánh `main`, commit `9a3c1c3`
-- Deadline áp dụng: 23:59 ngày 15/09/2026
+- Deadline áp dụng: 12:00 ngày 16/09/2026
 
 ## Thành viên
 
