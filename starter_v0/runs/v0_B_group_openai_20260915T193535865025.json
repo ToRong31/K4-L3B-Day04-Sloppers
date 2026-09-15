@@ -1,0 +1,748 @@
+{
+  "run_id": "v0_B_group_openai_20260915T193535865025",
+  "version": "v0",
+  "artifact_version": "v0+p15b64891d421+t06436648f242",
+  "prompt_hash": "15b64891d4218b2925f3e663c98adfbaf5a1fc97257b66ceb0a947cbc5399dee",
+  "tools_hash": "06436648f2426974e523be8b7c555fa7d2e58a7739852ad31215c74c470bcafc",
+  "phase": "B",
+  "suite": "group",
+  "provider": "openai",
+  "model": "gpt-4o-mini",
+  "system_prompt": "/Users/huynguyen/Documents/VinUni_Lab/K4-L3B-Day04-Sloppers/starter_v0/artifacts/system_prompt.md",
+  "tools": "/Users/huynguyen/Documents/VinUni_Lab/K4-L3B-Day04-Sloppers/starter_v0/artifacts/tools.yaml",
+  "eval_cases": "data/eval_meeting_room.json",
+  "dataset_id": "day04_v3_meeting_room_group",
+  "dataset_role": "group",
+  "description": "Team-built bonus eval for the meeting_room tool. 5 single-turn + 5 multi-turn cases.",
+  "generated_at": "2026-09-15T19:35:35",
+  "summary": {
+    "total_cases": 10,
+    "measured_cases": 10,
+    "provider_error_cases": 0,
+    "passed_cases": 7,
+    "case_accuracy": 0.7,
+    "tool_routing_accuracy": 0.7,
+    "argument_accuracy": 0.7,
+    "multiturn_accuracy": 0.4,
+    "failure_counts": {
+      "wrong_boundary": 2,
+      "wrong_tool": 1
+    },
+    "observed_mismatch_counts": {
+      "missing_tool_call": 3
+    }
+  },
+  "results": [
+    {
+      "id": "MR01_check_availability_by_room",
+      "phase": "B",
+      "suite": "group",
+      "case_suite": "group",
+      "is_multiturn": false,
+      "metadata": {
+        "skill": "meeting_room_check",
+        "difficulty": "easy",
+        "what_it_tests": "Check availability by specific room and date."
+      },
+      "input": "Phòng MR-301 trống ngày 2026-09-16 những khung giờ nào?",
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "meeting_room",
+            "args": {
+              "action": "check_availability",
+              "room_id": "MR-301",
+              "date": "2026-09-16"
+            }
+          }
+        ]
+      },
+      "result": {
+        "passed": true,
+        "routing_correct": true,
+        "args_correct": true,
+        "actual_tool_calls": [
+          {
+            "name": "meeting_room",
+            "args": {
+              "action": "check_availability",
+              "room_id": "MR-301",
+              "date": "2026-09-16"
+            }
+          }
+        ],
+        "actual_text": null,
+        "case_failure_type": "wrong_tool",
+        "observed_mismatch": null,
+        "failure_type": null,
+        "failures": []
+      },
+      "tool_results": [
+        {
+          "tool": "meeting_room",
+          "args": {
+            "action": "check_availability",
+            "room_id": "MR-301",
+            "date": "2026-09-16"
+          },
+          "result": {
+            "tool": "meeting_room",
+            "action": "check_availability",
+            "results": [
+              {
+                "room_id": "MR-301",
+                "name": "Vinfast",
+                "capacity": 8,
+                "equipment": [
+                  "projector",
+                  "whiteboard",
+                  "video_conference"
+                ],
+                "date": "2026-09-16",
+                "available_slots": [
+                  "08:00-09:00",
+                  "10:00-11:00",
+                  "11:00-12:00",
+                  "13:00-14:00",
+                  "15:00-16:00",
+                  "16:00-17:00"
+                ],
+                "booked_slots": [
+                  "09:00-10:00",
+                  "14:00-15:00"
+                ]
+              }
+            ],
+            "total_rooms": 1
+          }
+        }
+      ]
+    },
+    {
+      "id": "MR02_check_availability_by_capacity",
+      "phase": "B",
+      "suite": "group",
+      "case_suite": "group",
+      "is_multiturn": false,
+      "metadata": {
+        "skill": "meeting_room_capacity",
+        "difficulty": "medium",
+        "what_it_tests": "Check availability filtered by capacity."
+      },
+      "input": "Có phòng trống sức chứa tối thiểu 10 người ngày 2026-09-16 không?",
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "meeting_room",
+            "args": {
+              "action": "check_availability",
+              "date": "2026-09-16",
+              "capacity": 10
+            }
+          }
+        ]
+      },
+      "result": {
+        "passed": true,
+        "routing_correct": true,
+        "args_correct": true,
+        "actual_tool_calls": [
+          {
+            "name": "meeting_room",
+            "args": {
+              "action": "check_availability",
+              "capacity": 10,
+              "date": "2026-09-16"
+            }
+          }
+        ],
+        "actual_text": null,
+        "case_failure_type": "wrong_tool",
+        "observed_mismatch": null,
+        "failure_type": null,
+        "failures": []
+      },
+      "tool_results": [
+        {
+          "tool": "meeting_room",
+          "args": {
+            "action": "check_availability",
+            "capacity": 10,
+            "date": "2026-09-16"
+          },
+          "result": {
+            "tool": "meeting_room",
+            "action": "check_availability",
+            "results": [
+              {
+                "room_id": "MR-405",
+                "name": "Vinhomes",
+                "capacity": 20,
+                "equipment": [
+                  "projector",
+                  "whiteboard",
+                  "video_conference",
+                  "speaker"
+                ],
+                "date": "2026-09-16",
+                "available_slots": [
+                  "08:00-09:00",
+                  "09:00-10:00",
+                  "10:00-11:00",
+                  "11:00-12:00",
+                  "13:00-14:00",
+                  "14:00-15:00",
+                  "15:00-16:00",
+                  "16:00-17:00"
+                ],
+                "booked_slots": [
+                  "10:00-12:00"
+                ]
+              }
+            ],
+            "total_rooms": 1
+          }
+        }
+      ]
+    },
+    {
+      "id": "MR03_book_without_confirm",
+      "phase": "B",
+      "suite": "group",
+      "case_suite": "group",
+      "is_multiturn": false,
+      "metadata": {
+        "skill": "meeting_room_confirm",
+        "difficulty": "medium",
+        "what_it_tests": "Book is a write action, must ask confirmation first."
+      },
+      "input": "Đặt phòng MR-301 ngày 2026-09-16 khung 10:00-11:00 cho EMP-1003.",
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "clarify",
+            "args": {
+              "response_type": "yes_no"
+            }
+          }
+        ]
+      },
+      "result": {
+        "passed": true,
+        "routing_correct": true,
+        "args_correct": true,
+        "actual_tool_calls": [
+          {
+            "name": "clarify",
+            "args": {
+              "question": "Bạn có muốn xác nhận việc đặt phòng MR-301 vào ngày 2026-09-16 từ 10:00 đến 11:00 cho nhân viên EMP-1003 không?",
+              "response_type": "yes_no"
+            }
+          }
+        ],
+        "actual_text": null,
+        "case_failure_type": "wrong_boundary",
+        "observed_mismatch": null,
+        "failure_type": null,
+        "failures": []
+      },
+      "tool_results": [
+        {
+          "tool": "clarify",
+          "args": {
+            "question": "Bạn có muốn xác nhận việc đặt phòng MR-301 vào ngày 2026-09-16 từ 10:00 đến 11:00 cho nhân viên EMP-1003 không?",
+            "response_type": "yes_no"
+          },
+          "result": {
+            "tool": "clarify",
+            "question": "Bạn có muốn xác nhận việc đặt phòng MR-301 vào ngày 2026-09-16 từ 10:00 đến 11:00 cho nhân viên EMP-1003 không?",
+            "response_type": "yes_no",
+            "options": [],
+            "awaiting_user": true
+          }
+        }
+      ]
+    },
+    {
+      "id": "MR04_cancel_without_confirm",
+      "phase": "B",
+      "suite": "group",
+      "case_suite": "group",
+      "is_multiturn": false,
+      "metadata": {
+        "skill": "meeting_room_cancel_confirm",
+        "difficulty": "medium",
+        "what_it_tests": "Cancel is a write action, must ask confirmation first."
+      },
+      "input": "Hủy đặt phòng BK-1001 giúp mình.",
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "clarify",
+            "args": {
+              "response_type": "yes_no"
+            }
+          }
+        ]
+      },
+      "result": {
+        "passed": true,
+        "routing_correct": true,
+        "args_correct": true,
+        "actual_tool_calls": [
+          {
+            "name": "clarify",
+            "args": {
+              "question": "Bạn có chắc chắn muốn hủy đặt phòng BK-1001 không?",
+              "response_type": "yes_no"
+            }
+          }
+        ],
+        "actual_text": null,
+        "case_failure_type": "wrong_boundary",
+        "observed_mismatch": null,
+        "failure_type": null,
+        "failures": []
+      },
+      "tool_results": [
+        {
+          "tool": "clarify",
+          "args": {
+            "question": "Bạn có chắc chắn muốn hủy đặt phòng BK-1001 không?",
+            "response_type": "yes_no"
+          },
+          "result": {
+            "tool": "clarify",
+            "question": "Bạn có chắc chắn muốn hủy đặt phòng BK-1001 không?",
+            "response_type": "yes_no",
+            "options": [],
+            "awaiting_user": true
+          }
+        }
+      ]
+    },
+    {
+      "id": "MR05_room_not_found",
+      "phase": "B",
+      "suite": "group",
+      "case_suite": "group",
+      "is_multiturn": false,
+      "metadata": {
+        "skill": "meeting_room_not_found",
+        "difficulty": "easy",
+        "what_it_tests": "Room not found should return error with available rooms."
+      },
+      "input": "Phòng MR-999 trống ngày 2026-09-16 không?",
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "meeting_room",
+            "args": {
+              "action": "check_availability",
+              "room_id": "MR-999",
+              "date": "2026-09-16"
+            }
+          }
+        ]
+      },
+      "result": {
+        "passed": true,
+        "routing_correct": true,
+        "args_correct": true,
+        "actual_tool_calls": [
+          {
+            "name": "meeting_room",
+            "args": {
+              "action": "check_availability",
+              "room_id": "MR-999",
+              "date": "2026-09-16"
+            }
+          }
+        ],
+        "actual_text": null,
+        "case_failure_type": "missing_info",
+        "observed_mismatch": null,
+        "failure_type": null,
+        "failures": []
+      },
+      "tool_results": [
+        {
+          "tool": "meeting_room",
+          "args": {
+            "action": "check_availability",
+            "room_id": "MR-999",
+            "date": "2026-09-16"
+          },
+          "result": {
+            "tool": "meeting_room",
+            "action": "check_availability",
+            "error": "room_not_found",
+            "room_id": "MR-999",
+            "available_rooms": [
+              "MR-202",
+              "MR-301",
+              "MR-405"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "MR06_carry_date_multiturn",
+      "phase": "B",
+      "suite": "group",
+      "case_suite": "group",
+      "is_multiturn": true,
+      "metadata": {
+        "skill": "meeting_room_multiturn_carry",
+        "difficulty": "hard",
+        "what_it_tests": "Carry date from previous turn."
+      },
+      "input": [
+        {
+          "role": "user",
+          "content": "Tìm phòng trống ngày 2026-09-16."
+        },
+        {
+          "role": "user",
+          "content": "MR-301 trống giờ nào?"
+        }
+      ],
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "meeting_room",
+            "args": {
+              "action": "check_availability",
+              "room_id": "MR-301",
+              "date": "2026-09-16"
+            }
+          }
+        ]
+      },
+      "result": {
+        "passed": true,
+        "routing_correct": true,
+        "args_correct": true,
+        "actual_tool_calls": [
+          {
+            "name": "meeting_room",
+            "args": {
+              "action": "check_availability",
+              "room_id": "MR-301",
+              "date": "2026-09-16"
+            }
+          }
+        ],
+        "actual_text": null,
+        "case_failure_type": "wrong_arg_value",
+        "observed_mismatch": null,
+        "failure_type": null,
+        "failures": []
+      },
+      "tool_results": [
+        {
+          "tool": "meeting_room",
+          "args": {
+            "action": "check_availability",
+            "room_id": "MR-301",
+            "date": "2026-09-16"
+          },
+          "result": {
+            "tool": "meeting_room",
+            "action": "check_availability",
+            "results": [
+              {
+                "room_id": "MR-301",
+                "name": "Vinfast",
+                "capacity": 8,
+                "equipment": [
+                  "projector",
+                  "whiteboard",
+                  "video_conference"
+                ],
+                "date": "2026-09-16",
+                "available_slots": [
+                  "08:00-09:00",
+                  "10:00-11:00",
+                  "11:00-12:00",
+                  "13:00-14:00",
+                  "15:00-16:00",
+                  "16:00-17:00"
+                ],
+                "booked_slots": [
+                  "09:00-10:00",
+                  "14:00-15:00"
+                ]
+              }
+            ],
+            "total_rooms": 1
+          }
+        }
+      ]
+    },
+    {
+      "id": "MR07_book_then_confirm",
+      "phase": "B",
+      "suite": "group",
+      "case_suite": "group",
+      "is_multiturn": true,
+      "metadata": {
+        "skill": "meeting_room_multiturn_book_confirm",
+        "difficulty": "hard",
+        "what_it_tests": "Book then confirm in multi-turn."
+      },
+      "input": [
+        {
+          "role": "user",
+          "content": "Đặt phòng MR-301 ngày 2026-09-16 khung 10:00-11:00 cho EMP-1003."
+        },
+        {
+          "role": "user",
+          "content": "Đúng rồi, xác nhận đặt."
+        }
+      ],
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "meeting_room",
+            "args": {
+              "action": "book_room",
+              "room_id": "MR-301",
+              "date": "2026-09-16",
+              "time_slot": "10:00-11:00",
+              "employee_id": "EMP-1003",
+              "confirmed": true
+            }
+          }
+        ]
+      },
+      "result": {
+        "passed": false,
+        "routing_correct": false,
+        "args_correct": false,
+        "actual_tool_calls": [
+          {
+            "name": "clarify",
+            "args": {
+              "question": "Bạn có xác nhận đặt phòng MR-301 vào ngày 2026-09-16 từ 10:00 đến 11:00 cho nhân viên EMP-1003 không?",
+              "response_type": "yes_no"
+            }
+          }
+        ],
+        "actual_text": null,
+        "case_failure_type": "wrong_boundary",
+        "observed_mismatch": "missing_tool_call",
+        "failure_type": "wrong_boundary",
+        "failures": [
+          "missing tool call meeting_room",
+          "extra tool call clarify"
+        ]
+      },
+      "tool_results": [
+        {
+          "tool": "clarify",
+          "args": {
+            "question": "Bạn có xác nhận đặt phòng MR-301 vào ngày 2026-09-16 từ 10:00 đến 11:00 cho nhân viên EMP-1003 không?",
+            "response_type": "yes_no"
+          },
+          "result": {
+            "tool": "clarify",
+            "question": "Bạn có xác nhận đặt phòng MR-301 vào ngày 2026-09-16 từ 10:00 đến 11:00 cho nhân viên EMP-1003 không?",
+            "response_type": "yes_no",
+            "options": [],
+            "awaiting_user": true
+          }
+        }
+      ]
+    },
+    {
+      "id": "MR08_book_then_cancel",
+      "phase": "B",
+      "suite": "group",
+      "case_suite": "group",
+      "is_multiturn": true,
+      "metadata": {
+        "skill": "meeting_room_multiturn_cancel_wins",
+        "difficulty": "hard",
+        "what_it_tests": "Cancel request after book request, latest intent wins."
+      },
+      "input": [
+        {
+          "role": "user",
+          "content": "Đặt phòng MR-405 ngày 2026-09-16 khung 09:00-10:00 cho EMP-1001."
+        },
+        {
+          "role": "user",
+          "content": "Thôi không đặt nữa, hủy đi."
+        }
+      ],
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "meeting_room",
+            "args": {
+              "action": "cancel_booking",
+              "booking_id": ""
+            }
+          }
+        ]
+      },
+      "result": {
+        "passed": false,
+        "routing_correct": false,
+        "args_correct": false,
+        "actual_tool_calls": [
+          {
+            "name": "clarify",
+            "args": {
+              "question": "Bạn có chắc chắn muốn hủy đặt phòng MR-405 không?",
+              "response_type": "yes_no"
+            }
+          }
+        ],
+        "actual_text": null,
+        "case_failure_type": "wrong_tool",
+        "observed_mismatch": "missing_tool_call",
+        "failure_type": "wrong_tool",
+        "failures": [
+          "missing tool call meeting_room",
+          "extra tool call clarify"
+        ]
+      },
+      "tool_results": [
+        {
+          "tool": "clarify",
+          "args": {
+            "question": "Bạn có chắc chắn muốn hủy đặt phòng MR-405 không?",
+            "response_type": "yes_no"
+          },
+          "result": {
+            "tool": "clarify",
+            "question": "Bạn có chắc chắn muốn hủy đặt phòng MR-405 không?",
+            "response_type": "yes_no",
+            "options": [],
+            "awaiting_user": true
+          }
+        }
+      ]
+    },
+    {
+      "id": "MR09_cancel_then_revoke",
+      "phase": "B",
+      "suite": "group",
+      "case_suite": "group",
+      "is_multiturn": true,
+      "metadata": {
+        "skill": "meeting_room_multiturn_cancel_revoke",
+        "difficulty": "hard",
+        "what_it_tests": "User revokes cancellation request."
+      },
+      "input": [
+        {
+          "role": "user",
+          "content": "Hủy đặt phòng BK-1002."
+        },
+        {
+          "role": "user",
+          "content": "Khoan, không hủy nữa, giữ nguyên."
+        }
+      ],
+      "expect": {
+        "no_tool": true,
+        "behavior": "answer_without_tool"
+      },
+      "result": {
+        "passed": true,
+        "routing_correct": true,
+        "args_correct": true,
+        "actual_tool_calls": [],
+        "actual_text": "{\n  \"intent\": \"meeting_room\",\n  \"action\": \"cancel_booking\",\n  \"reply\": \"Đặt phòng BK-1002 sẽ không bị hủy. Nếu bạn cần hỗ trợ gì thêm, hãy cho tôi biết!\",\n  \"evidence_ids\": []\n}",
+        "case_failure_type": "unnecessary_tool",
+        "observed_mismatch": null,
+        "failure_type": null,
+        "failures": []
+      },
+      "tool_results": []
+    },
+    {
+      "id": "MR10_change_room_then_confirm",
+      "phase": "B",
+      "suite": "group",
+      "case_suite": "group",
+      "is_multiturn": true,
+      "metadata": {
+        "skill": "meeting_room_multiturn_change_room",
+        "difficulty": "hard",
+        "what_it_tests": "Change room then confirm, must use updated payload."
+      },
+      "input": [
+        {
+          "role": "user",
+          "content": "Đặt phòng MR-405 ngày 2026-09-16 khung 09:00-10:00 cho EMP-1001."
+        },
+        {
+          "role": "user",
+          "content": "Đổi sang MR-301."
+        },
+        {
+          "role": "user",
+          "content": "Xác nhận đặt."
+        }
+      ],
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "meeting_room",
+            "args": {
+              "action": "book_room",
+              "room_id": "MR-301",
+              "date": "2026-09-16",
+              "time_slot": "09:00-10:00",
+              "employee_id": "EMP-1001",
+              "confirmed": true
+            }
+          }
+        ]
+      },
+      "result": {
+        "passed": false,
+        "routing_correct": false,
+        "args_correct": false,
+        "actual_tool_calls": [
+          {
+            "name": "clarify",
+            "args": {
+              "question": "Bạn có chắc chắn muốn đặt phòng MR-301 vào ngày 2026-09-16 từ 09:00 đến 10:00 cho EMP-1001 không?",
+              "response_type": "yes_no"
+            }
+          }
+        ],
+        "actual_text": null,
+        "case_failure_type": "wrong_boundary",
+        "observed_mismatch": "missing_tool_call",
+        "failure_type": "wrong_boundary",
+        "failures": [
+          "missing tool call meeting_room",
+          "extra tool call clarify"
+        ]
+      },
+      "tool_results": [
+        {
+          "tool": "clarify",
+          "args": {
+            "question": "Bạn có chắc chắn muốn đặt phòng MR-301 vào ngày 2026-09-16 từ 09:00 đến 10:00 cho EMP-1001 không?",
+            "response_type": "yes_no"
+          },
+          "result": {
+            "tool": "clarify",
+            "question": "Bạn có chắc chắn muốn đặt phòng MR-301 vào ngày 2026-09-16 từ 09:00 đến 10:00 cho EMP-1001 không?",
+            "response_type": "yes_no",
+            "options": [],
+            "awaiting_user": true
+          }
+        }
+      ]
+    }
+  ]
+}

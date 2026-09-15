@@ -1,0 +1,114 @@
+{
+  "dataset_id": "day04_v3_meeting_room_group",
+  "dataset_role": "group",
+  "description": "Team-built bonus eval for the meeting_room tool. 5 single-turn + 5 multi-turn cases.",
+  "allowed_failure_types": ["wrong_tool", "wrong_arg_value", "wrong_boundary", "unnecessary_tool", "out_of_scope", "missing_info"],
+  "cases": [
+    {
+      "id": "MR01_check_availability_by_room",
+      "phase": "B",
+      "suite": "group",
+      "query": "Phòng MR-301 trống ngày 2026-09-16 những khung giờ nào?",
+      "failure_type": "wrong_tool",
+      "expect": {"tool_calls": [{"name": "meeting_room", "args": {"action": "check_availability", "room_id": "MR-301", "date": "2026-09-16"}}]},
+      "metadata": {"skill": "meeting_room_check", "difficulty": "easy", "what_it_tests": "Check availability by specific room and date."}
+    },
+    {
+      "id": "MR02_check_availability_by_capacity",
+      "phase": "B",
+      "suite": "group",
+      "query": "Có phòng trống sức chứa tối thiểu 10 người ngày 2026-09-16 không?",
+      "failure_type": "wrong_tool",
+      "expect": {"tool_calls": [{"name": "meeting_room", "args": {"action": "check_availability", "date": "2026-09-16", "capacity": 10}}]},
+      "metadata": {"skill": "meeting_room_capacity", "difficulty": "medium", "what_it_tests": "Check availability filtered by capacity."}
+    },
+    {
+      "id": "MR03_book_without_confirm",
+      "phase": "B",
+      "suite": "group",
+      "query": "Đặt phòng MR-301 ngày 2026-09-16 khung 10:00-11:00 cho EMP-1003.",
+      "failure_type": "wrong_boundary",
+      "expect": {"tool_calls": [{"name": "clarify", "args": {"response_type": "yes_no"}}]},
+      "metadata": {"skill": "meeting_room_confirm", "difficulty": "medium", "what_it_tests": "Book is a write action, must ask confirmation first."}
+    },
+    {
+      "id": "MR04_cancel_without_confirm",
+      "phase": "B",
+      "suite": "group",
+      "query": "Hủy đặt phòng BK-1001 giúp mình.",
+      "failure_type": "wrong_boundary",
+      "expect": {"tool_calls": [{"name": "clarify", "args": {"response_type": "yes_no"}}]},
+      "metadata": {"skill": "meeting_room_cancel_confirm", "difficulty": "medium", "what_it_tests": "Cancel is a write action, must ask confirmation first."}
+    },
+    {
+      "id": "MR05_room_not_found",
+      "phase": "B",
+      "suite": "group",
+      "query": "Phòng MR-999 trống ngày 2026-09-16 không?",
+      "failure_type": "missing_info",
+      "expect": {"tool_calls": [{"name": "meeting_room", "args": {"action": "check_availability", "room_id": "MR-999", "date": "2026-09-16"}}]},
+      "metadata": {"skill": "meeting_room_not_found", "difficulty": "easy", "what_it_tests": "Room not found should return error with available rooms."}
+    },
+    {
+      "id": "MR06_carry_date_multiturn",
+      "phase": "B",
+      "suite": "group",
+      "turns": [
+        {"role": "user", "content": "Tìm phòng trống ngày 2026-09-16."},
+        {"role": "user", "content": "MR-301 trống giờ nào?"}
+      ],
+      "failure_type": "wrong_arg_value",
+      "expect": {"tool_calls": [{"name": "meeting_room", "args": {"action": "check_availability", "room_id": "MR-301", "date": "2026-09-16"}}]},
+      "metadata": {"skill": "meeting_room_multiturn_carry", "difficulty": "hard", "what_it_tests": "Carry date from previous turn."}
+    },
+    {
+      "id": "MR07_book_then_confirm",
+      "phase": "B",
+      "suite": "group",
+      "turns": [
+        {"role": "user", "content": "Đặt phòng MR-301 ngày 2026-09-16 khung 10:00-11:00 cho EMP-1003."},
+        {"role": "user", "content": "Đúng rồi, xác nhận đặt."}
+      ],
+      "failure_type": "wrong_boundary",
+      "expect": {"tool_calls": [{"name": "meeting_room", "args": {"action": "book_room", "room_id": "MR-301", "date": "2026-09-16", "time_slot": "10:00-11:00", "employee_id": "EMP-1003", "confirmed": true}}]},
+      "metadata": {"skill": "meeting_room_multiturn_book_confirm", "difficulty": "hard", "what_it_tests": "Book then confirm in multi-turn."}
+    },
+    {
+      "id": "MR08_book_then_cancel",
+      "phase": "B",
+      "suite": "group",
+      "turns": [
+        {"role": "user", "content": "Đặt phòng MR-405 ngày 2026-09-16 khung 09:00-10:00 cho EMP-1001."},
+        {"role": "user", "content": "Thôi không đặt nữa, hủy đi."}
+      ],
+      "failure_type": "wrong_tool",
+      "expect": {"tool_calls": [{"name": "meeting_room", "args": {"action": "cancel_booking", "booking_id": ""}}]},
+      "metadata": {"skill": "meeting_room_multiturn_cancel_wins", "difficulty": "hard", "what_it_tests": "Cancel request after book request, latest intent wins."}
+    },
+    {
+      "id": "MR09_cancel_then_revoke",
+      "phase": "B",
+      "suite": "group",
+      "turns": [
+        {"role": "user", "content": "Hủy đặt phòng BK-1002."},
+        {"role": "user", "content": "Khoan, không hủy nữa, giữ nguyên."}
+      ],
+      "failure_type": "unnecessary_tool",
+      "expect": {"no_tool": true, "behavior": "answer_without_tool"},
+      "metadata": {"skill": "meeting_room_multiturn_cancel_revoke", "difficulty": "hard", "what_it_tests": "User revokes cancellation request."}
+    },
+    {
+      "id": "MR10_change_room_then_confirm",
+      "phase": "B",
+      "suite": "group",
+      "turns": [
+        {"role": "user", "content": "Đặt phòng MR-405 ngày 2026-09-16 khung 09:00-10:00 cho EMP-1001."},
+        {"role": "user", "content": "Đổi sang MR-301."},
+        {"role": "user", "content": "Xác nhận đặt."}
+      ],
+      "failure_type": "wrong_boundary",
+      "expect": {"tool_calls": [{"name": "meeting_room", "args": {"action": "book_room", "room_id": "MR-301", "date": "2026-09-16", "time_slot": "09:00-10:00", "employee_id": "EMP-1001", "confirmed": true}}]},
+      "metadata": {"skill": "meeting_room_multiturn_change_room", "difficulty": "hard", "what_it_tests": "Change room then confirm, must use updated payload."}
+    }
+  ]
+}
