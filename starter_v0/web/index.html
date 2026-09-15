@@ -1,0 +1,210 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Slopper — trợ lý IT Helpdesk có tool calling và audit transcript." />
+    <title>Slopper · IT Service Desk</title>
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='9' fill='%232563eb'/%3E%3Cpath d='M16 4l3.2 8.8L28 16l-8.8 3.2L16 28l-3.2-8.8L4 16l8.8-3.2L16 4z' fill='none' stroke='white' stroke-width='1.7'/%3E%3C/svg%3E" />
+    <link rel="stylesheet" href="/static/styles.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <aside class="sidebar" id="sidebar">
+        <div class="brand">
+          <div class="brand-mark" aria-hidden="true">
+            <svg viewBox="0 0 32 32"><path d="M16 2 19.8 12.2 30 16l-10.2 3.8L16 30l-3.8-10.2L2 16l10.2-3.8L16 2Z"/><circle cx="16" cy="16" r="3.2"/></svg>
+          </div>
+          <div>
+            <div class="brand-name">Slopper</div>
+            <div class="brand-subtitle">IT Service Desk</div>
+          </div>
+        </div>
+
+        <button class="new-chat-button" id="newConversationBtn" type="button">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
+          Cuộc hội thoại mới
+        </button>
+
+        <nav class="sidebar-nav" aria-label="Tác vụ nhanh">
+          <div class="nav-label">Hỗ trợ nhanh</div>
+          <button class="nav-item" type="button" data-prompt="Kiểm tra trạng thái VPN production hiện tại.">
+            <span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M4 12h3l2-6 4 12 2-6h5"/></svg></span>
+            Trạng thái dịch vụ
+          </button>
+          <button class="nav-item" type="button" data-prompt="Kiểm tra tổng thể laptop LT-204 giúp tôi.">
+            <span class="nav-icon"><svg viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="11" rx="2"/><path d="M2 19h20"/></svg></span>
+            Chẩn đoán thiết bị
+          </button>
+          <button class="nav-item" type="button" data-prompt="Tìm hướng dẫn cấu hình Outlook profile trên Windows 11.">
+            <span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H11v16H6.5A2.5 2.5 0 0 0 4 21.5v-16ZM20 5.5A2.5 2.5 0 0 0 17.5 3H13v16h4.5a2.5 2.5 0 0 1 2.5 2.5v-16Z"/></svg></span>
+            Knowledge base
+          </button>
+          <button class="nav-item" type="button" data-prompt="Tạo ticket mức high cho lỗi VPN trên LT-204 giúp tôi.">
+            <span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M4 7a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v2a3 3 0 0 0 0 6v2a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-2a3 3 0 0 0 0-6V7Z"/><path d="M12 8v8"/></svg></span>
+            Tạo ticket
+          </button>
+        </nav>
+
+        <div class="sidebar-footer">
+          <div class="security-card">
+            <div class="security-icon">
+              <svg viewBox="0 0 24 24"><path d="M12 3 5 6v5c0 4.6 2.9 8.7 7 10 4.1-1.3 7-5.4 7-10V6l-7-3Z"/><path d="m9 12 2 2 4-4"/></svg>
+            </div>
+            <div>
+              <strong>Privacy guard</strong>
+              <span>Không nhập mật khẩu, OTP hay token</span>
+            </div>
+          </div>
+          <div class="sidebar-meta">
+            <span><span class="status-dot" id="providerDot"></span><span id="providerLabel">Đang kết nối</span></span>
+            <span id="sidebarVersion">v3</span>
+          </div>
+        </div>
+      </aside>
+
+      <main class="main-panel">
+        <header class="topbar">
+          <div class="topbar-title-wrap">
+            <button class="icon-button mobile-menu" id="mobileSidebarBtn" type="button" aria-label="Mở menu">
+              <svg viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+            </button>
+            <div class="agent-avatar small" aria-hidden="true">
+              <svg viewBox="0 0 32 32"><path d="M16 2 19.8 12.2 30 16l-10.2 3.8L16 30l-3.8-10.2L2 16l10.2-3.8L16 2Z"/></svg>
+            </div>
+            <div>
+              <div class="topbar-title">Slopper</div>
+              <div class="topbar-subtitle"><span class="live-dot"></span> Trợ lý IT nội bộ · Có kiểm chứng</div>
+            </div>
+          </div>
+          <div class="topbar-actions">
+            <div class="artifact-chip" title="Phiên bản prompt và tool declaration">
+              <span>Artifact</span>
+              <strong id="artifactVersion">Đang tải…</strong>
+            </div>
+            <button class="icon-button" id="downloadBtn" type="button" aria-label="Tải transcript" title="Tải transcript">
+              <svg viewBox="0 0 24 24"><path d="M12 3v12m0 0 4-4m-4 4-4-4M5 20h14"/></svg>
+            </button>
+            <button class="icon-button" id="settingsBtn" type="button" aria-label="Cấu hình" title="Cấu hình">
+              <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1-2.8 2.8-.1-.1a1.7 1.7 0 0 0-1.9-.3 1.7 1.7 0 0 0-1 1.6v.2h-4V21a1.7 1.7 0 0 0-1-1.6 1.7 1.7 0 0 0-1.9.3l-.1.1L4.2 17l.1-.1a1.7 1.7 0 0 0 .3-1.9A1.7 1.7 0 0 0 3 14H2.8v-4H3a1.7 1.7 0 0 0 1.6-1 1.7 1.7 0 0 0-.3-1.9L4.2 7 7 4.2l.1.1A1.7 1.7 0 0 0 9 4.6a1.7 1.7 0 0 0 1-1.6v-.2h4V3a1.7 1.7 0 0 0 1 1.6 1.7 1.7 0 0 0 1.9-.3l.1-.1L19.8 7l-.1.1a1.7 1.7 0 0 0-.3 1.9 1.7 1.7 0 0 0 1.6 1h.2v4H21a1.7 1.7 0 0 0-1.6 1Z"/></svg>
+            </button>
+          </div>
+        </header>
+
+        <div class="workspace">
+          <section class="conversation-column">
+            <div class="conversation" id="conversation" aria-live="polite">
+              <section class="welcome-panel" id="welcomePanel">
+                <div class="welcome-badge"><span></span> IT support, ngay khi bạn cần</div>
+                <div class="welcome-icon" aria-hidden="true">
+                  <svg viewBox="0 0 56 56"><path d="M28 4 34.5 21.5 52 28l-17.5 6.5L28 52l-6.5-17.5L4 28l17.5-6.5L28 4Z"/><circle cx="28" cy="28" r="6"/></svg>
+                </div>
+                <h1>Chào bạn, mình có thể hỗ trợ gì?</h1>
+                <p>Mình có thể kiểm tra dịch vụ, chẩn đoán thiết bị, tìm hướng dẫn nội bộ và hỗ trợ tạo ticket với quy trình xác nhận an toàn.</p>
+                <div class="quick-grid" id="quickActions"></div>
+                <div class="trust-row">
+                  <span><svg viewBox="0 0 20 20"><path d="m5 10 3 3 7-7"/></svg> Dữ liệu giả lập</span>
+                  <span><svg viewBox="0 0 20 20"><path d="M10 2 4 4.5v4.2c0 4 2.5 7.5 6 8.6 3.5-1.1 6-4.6 6-8.6V4.5L10 2Z"/></svg> Guardrail chủ động</span>
+                  <span><svg viewBox="0 0 20 20"><path d="M3 10h3l2-5 4 10 2-5h3"/></svg> Tool trace minh bạch</span>
+                </div>
+              </section>
+            </div>
+
+            <div class="composer-wrap">
+              <form class="composer" id="composerForm">
+                <div class="composer-leading" aria-hidden="true">
+                  <svg viewBox="0 0 24 24"><path d="M8.5 12h7M12 8.5v7"/><circle cx="12" cy="12" r="9"/></svg>
+                </div>
+                <textarea id="messageInput" rows="1" maxlength="8000" placeholder="Mô tả sự cố hoặc yêu cầu hỗ trợ…" aria-label="Tin nhắn"></textarea>
+                <div class="composer-actions">
+                  <span class="char-count" id="charCount">0/8000</span>
+                  <button class="send-button" id="sendButton" type="submit" aria-label="Gửi tin nhắn">
+                    <svg viewBox="0 0 24 24"><path d="m5 12 14-8-4 16-3-6-7-2Z"/><path d="m12 14 7-10"/></svg>
+                  </button>
+                </div>
+              </form>
+              <div class="composer-note">
+                <svg viewBox="0 0 18 18"><path d="M9 2 3.5 4.3v3.5c0 3.5 2.3 6.5 5.5 7.5 3.2-1 5.5-4 5.5-7.5V4.3L9 2Z"/></svg>
+                Không chia sẻ mật khẩu, API key, OTP/MFA hoặc recovery code.
+              </div>
+            </div>
+          </section>
+
+          <aside class="activity-panel">
+            <div class="activity-header">
+              <div>
+                <span class="eyebrow">Live audit</span>
+                <h2>Tool activity</h2>
+              </div>
+              <div class="tool-count" id="toolEventCount">0</div>
+            </div>
+            <div class="activity-feed" id="activityFeed">
+              <div class="empty-activity" id="activityEmpty">
+                <div class="radar"><span></span><span></span><span></span></div>
+                <strong>Chưa có tool call</strong>
+                <p>Mỗi hành động của agent sẽ xuất hiện ở đây cùng input và kết quả.</p>
+              </div>
+            </div>
+            <div class="session-card" id="sessionMeta">
+              <div class="session-card-title">
+                <span>Thông tin phiên</span>
+                <span class="session-live">LIVE</span>
+              </div>
+              <dl>
+                <div><dt>Provider</dt><dd id="metaProvider">—</dd></div>
+                <div><dt>Model</dt><dd id="metaModel">—</dd></div>
+                <div><dt>Tools</dt><dd id="metaTools">—</dd></div>
+                <div><dt>Transcript</dt><dd id="metaTranscript">—</dd></div>
+              </dl>
+            </div>
+          </aside>
+        </div>
+      </main>
+    </div>
+
+    <dialog class="settings-dialog" id="settingsDialog">
+      <form method="dialog" class="settings-form" id="settingsForm">
+        <div class="dialog-header">
+          <div>
+            <span class="eyebrow">Runtime</span>
+            <h2>Cấu hình agent</h2>
+            <p>Thay đổi cấu hình sẽ bắt đầu một transcript mới.</p>
+          </div>
+          <button class="icon-button" id="settingsCancel" type="button" aria-label="Đóng">
+            <svg viewBox="0 0 24 24"><path d="m6 6 12 12M18 6 6 18"/></svg>
+          </button>
+        </div>
+        <div class="form-grid">
+          <label>
+            <span>Provider</span>
+            <select id="providerSelect"></select>
+            <small id="providerHint">API key được đọc từ `.env`, không hiển thị trên UI.</small>
+          </label>
+          <label>
+            <span>Artifact version</span>
+            <input id="versionInput" value="v3" maxlength="32" />
+          </label>
+          <label class="full-width">
+            <span>Model override <em>không bắt buộc</em></span>
+            <input id="modelInput" placeholder="Dùng model mặc định của provider" maxlength="160" />
+          </label>
+          <label>
+            <span>History window</span>
+            <input id="historyWindow" type="number" min="1" max="20" value="5" />
+          </label>
+          <label>
+            <span>Max tool rounds</span>
+            <input id="maxRounds" type="number" min="1" max="8" value="4" />
+          </label>
+        </div>
+        <div class="dialog-footer">
+          <button class="secondary-button" id="dialogCancelButton" type="button">Hủy</button>
+          <button class="primary-button" type="submit">Áp dụng & tạo phiên mới</button>
+        </div>
+      </form>
+    </dialog>
+
+    <div class="toast-region" id="toastRegion" aria-live="polite"></div>
+    <script src="/static/app.js" defer></script>
+  </body>
+</html>

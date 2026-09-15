@@ -1,7 +1,121 @@
 {
   "dataset_id": "day04_v3_helpdesk_group",
   "dataset_role": "group",
-  "description": "Template intentionally left empty. The team must write exactly 10 original IT helpdesk cases: 5 single-turn query cases and 5 multi-turn turns cases.",
+  "description": "Ten original IT Helpdesk cases authored by team Sloppers: exactly five single-turn and five multi-turn cases.",
   "allowed_failure_types": ["wrong_tool", "wrong_arg_value", "wrong_boundary", "unnecessary_tool", "out_of_scope", "missing_info"],
-  "cases": []
+  "cases": [
+    {
+      "id": "G01_printing_kb_single",
+      "phase": "B",
+      "suite": "group",
+      "query": "Tìm hướng dẫn nội bộ để khởi động lại hàng đợi in trên Windows.",
+      "failure_type": "wrong_tool",
+      "expect": {"tool_calls": [{"name": "search_kb", "args": {"category": "printing"}}]},
+      "metadata": {"turn_type": "single", "what_it_tests": "Route a printer troubleshooting how-to to the internal KB."}
+    },
+    {
+      "id": "G02_sso_staging_single",
+      "phase": "B",
+      "suite": "group",
+      "query": "Kiểm tra trạng thái SSO staging hiện tại.",
+      "failure_type": "wrong_arg_value",
+      "expect": {"tool_calls": [{"name": "check_service_status", "args": {"service": "sso", "environment": "staging"}}]},
+      "metadata": {"turn_type": "single", "what_it_tests": "Preserve an explicitly supplied service and environment."}
+    },
+    {
+      "id": "G03_device_network_single",
+      "phase": "B",
+      "suite": "group",
+      "query": "Chỉ kiểm tra network của máy DT-087, không chạy kiểm tra tổng thể.",
+      "failure_type": "wrong_arg_value",
+      "expect": {"tool_calls": [{"name": "inspect_device", "args": {"asset_id": "DT-087", "check": "network"}}]},
+      "metadata": {"turn_type": "single", "what_it_tests": "Honor the requested narrow device check and explicit exclusion."}
+    },
+    {
+      "id": "G04_user_lookup_single",
+      "phase": "B",
+      "suite": "group",
+      "query": "Tra hồ sơ tài khoản và máy được cấp cho EMP-1007.",
+      "failure_type": "unnecessary_tool",
+      "expect": {"tool_calls": [{"name": "lookup_user", "args": {"employee_id": "EMP-1007"}}]},
+      "metadata": {"turn_type": "single", "what_it_tests": "Use directory lookup without an unnecessary device diagnostic."}
+    },
+    {
+      "id": "G05_external_policy_single",
+      "phase": "B",
+      "suite": "group",
+      "query": "Tra policy nội bộ về dữ liệu nào được phép gửi sang công cụ bên ngoài.",
+      "failure_type": "wrong_tool",
+      "expect": {"tool_calls": [{"name": "policy", "args": {"policy_area": "external_tools"}}]},
+      "metadata": {"turn_type": "single", "what_it_tests": "Distinguish internal policy retrieval from external web search."}
+    },
+    {
+      "id": "G06_asset_correction_multi",
+      "phase": "B",
+      "suite": "group",
+      "turns": [
+        {"role": "user", "content": "Kiểm tra hardware máy LT-204."},
+        {"role": "user", "content": "Mã vừa rồi sai, đổi sang DT-031."},
+        {"role": "user", "content": "Tiếp tục đúng loại kiểm tra hardware trên mã mới."}
+      ],
+      "failure_type": "wrong_arg_value",
+      "expect": {"tool_calls": [{"name": "inspect_device", "args": {"asset_id": "DT-031", "check": "hardware"}}]},
+      "metadata": {"turn_type": "multi", "what_it_tests": "Replace a stale asset ID while carrying the requested check."}
+    },
+    {
+      "id": "G07_environment_carry_multi",
+      "phase": "B",
+      "suite": "group",
+      "turns": [
+        {"role": "user", "content": "Kiểm tra Wi-Fi production."},
+        {"role": "user", "content": "Đổi dịch vụ cần xem sang printing."},
+        {"role": "user", "content": "Giữ nguyên môi trường đã nói và chỉ xem status."}
+      ],
+      "failure_type": "wrong_arg_value",
+      "expect": {"tool_calls": [{"name": "check_service_status", "args": {"service": "printing", "environment": "production"}}]},
+      "metadata": {"turn_type": "multi", "what_it_tests": "Carry environment while replacing the service and latest intent."}
+    },
+    {
+      "id": "G08_confirmed_ticket_multi",
+      "phase": "B",
+      "suite": "group",
+      "turns": [
+        {"role": "user", "content": "Soạn ticket lỗi Outlook trên LT-204, priority medium."},
+        {"role": "user", "content": "Nội dung và mức ưu tiên đó đều đúng."},
+        {"role": "user", "content": "Tôi xác nhận tạo ticket với đúng payload vừa nêu."}
+      ],
+      "failure_type": "wrong_boundary",
+      "expect": {"tool_calls": [{"name": "create_ticket", "args": {"asset_id": "LT-204", "priority": "medium", "confirmed": true}}]},
+      "metadata": {"turn_type": "multi", "what_it_tests": "Execute a write only after explicit confirmation of the unchanged payload."}
+    },
+    {
+      "id": "G09_cancel_ticket_multi",
+      "phase": "B",
+      "suite": "group",
+      "turns": [
+        {"role": "user", "content": "Chuẩn bị ticket lỗi Wi-Fi cho LT-240."},
+        {"role": "user", "content": "Thôi hủy yêu cầu ticket."},
+        {"role": "user", "content": "Chỉ xác nhận là bạn sẽ không tạo dữ liệu nào."}
+      ],
+      "failure_type": "unnecessary_tool",
+      "expect": {"no_tool": true, "behavior": "acknowledge_cancellation"},
+      "metadata": {"turn_type": "multi", "what_it_tests": "A cancellation removes the stale write action."}
+    },
+    {
+      "id": "G10_parallel_user_device_multi",
+      "phase": "B",
+      "suite": "group",
+      "turns": [
+        {"role": "user", "content": "Tôi cần xem tài khoản EMP-1009."},
+        {"role": "user", "content": "Máy liên quan là DT-087."},
+        {"role": "user", "content": "Tra tài khoản đó và kiểm tra security của đúng máy vừa nêu."}
+      ],
+      "failure_type": "wrong_tool",
+      "expect": {"tool_calls": [
+        {"name": "lookup_user", "args": {"employee_id": "EMP-1009"}},
+        {"name": "inspect_device", "args": {"asset_id": "DT-087", "check": "security"}}
+      ]},
+      "metadata": {"turn_type": "multi", "what_it_tests": "Carry two independent identifiers and call both required sources."}
+    }
+  ]
 }
