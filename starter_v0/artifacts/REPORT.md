@@ -3,7 +3,7 @@
 - Lĩnh vực tự chọn:
 - Nhiệm vụ và luồng cơ bản đã chốt trước v0:
 - Đường dẫn bộ 30 câu cơ bản và 12 câu an toàn; commit chốt bộ trước v0:
-- Chức năng mở rộng ngoài luồng cơ bản (nếu có; tối đa 10 trong tổng 100 điểm):
+- Chức năng mở rộng ngoài luồng cơ bản (nếu có; tối đa 10 trong tổng 100 điểm): meeting_room tool — xem lịch trống, đặt phòng, hủy đặt phòng họp
 
 ## Team
 
@@ -27,7 +27,15 @@
 | Tool | Chức năng | Core / optional / team-built |
 |---|---|---|
 | clarify | Hỏi bổ sung hoặc xác nhận | core |
-|  |  |  |
+| search_kb | Tìm hướng dẫn KB | core |
+| check_service_status | Kiểm tra trạng thái dịch vụ | core |
+| inspect_device | Chẩn đoán thiết bị | core |
+| lookup_user | Tra cứu nhân viên | core |
+| format_incident_report | Format báo cáo | core |
+| policy | Tìm chính sách IT | optional |
+| create_ticket | Tạo ticket hỗ trợ | optional |
+| search_device_info | Tìm thông tin thiết bị trên web | optional |
+| meeting_room | Quản lý phòng họp: check/book/cancel | **team-built bonus** |
 
 ## A3. Câu hỏi mẫu
 
@@ -59,7 +67,9 @@ total_cases`, và tool result error đã được review thủ công.
 
 | Case ID | Failure type | Actual calls | What failed | Fix |
 |---|---|---|---|---|
-|  |  |  |  |  |
+| MR07_book_then_confirm | wrong_boundary | clarify(yes_no) | Agent gọi clarify lại sau khi user đã confirm ở turn 2. Eval kỳ vọng meeting_room(confirmed=true) trực tiếp. | System prompt cần hướng dẫn: khi user đã nói "xác nhận" rõ ràng, gọi tool với confirmed=true luôn, không clarify lại. |
+| MR08_book_then_cancel | wrong_tool | clarify(yes_no) | Agent hỏi confirm hủy thay vì gọi meeting_room(cancel_booking). Eval kỳ vọng tool call đầu tiên là meeting_room. | Agent cần gọi meeting_room(cancel_booking) trước, tool sẽ trả needs_confirmation, sau đó mới clarify. |
+| MR10_change_room_confirm | wrong_boundary | clarify(yes_nouse_meeting_room(confirmed=true) dùng room mới | Agent confirm lại phòng cũ MR-405 thay vì dùng MR-301 đã sửa ở turn 2. | Agent cần carry payload mới nhất khi confirm. |
 
 ## B3. Team eval cases
 
@@ -67,7 +77,16 @@ Liệt kê đúng 10 case tự viết: 5 single-turn và 5 multi-turn.
 
 | Case ID | What it tests | Expected behavior | Result |
 |---|---|---|---|
-|  |  |  |  |
+| MR01 | Check availability by room | meeting_room(check_availability, MR-301, 2026-09-16) | PASS |
+| MR02 | Check availability by capacity | meeting_room(check_availability, date, capacity=10) | PASS |
+| MR03 | Book without confirm | clarify(yes_no) trước khi book | PASS |
+| MR04 | Cancel without confirm | clarify(yes_no) trước khi cancel | PASS |
+| MR05 | Room not found | meeting_room(check_availability, MR-999) → error | PASS |
+| MR06 | Carry date multi-turn | Carry date từ turn trước sang turn sau | PASS |
+| MR07 | Book then confirm | meeting_room(book_room, confirmed=true) sau confirm | FAIL wrong_boundary |
+| MR08 | Book then cancel | meeting_room(cancel_booking) khi user muốn hủy | FAIL wrong_tool |
+| MR09 | Cancel then revoke | Hủy yêu cầu hủy → no tool | PASS |
+| MR10 | Change room confirm | meeting_room(book_room, MR-301, confirmed=true) dùng room mới | FAIL wrong_boundary |
 
 ## B4. Live chat evidence
 
@@ -93,9 +112,7 @@ nhóm tự xây.
 
 | Category | Evidence file | What worked | Risk / guardrail |
 |---|---|---|---|
-| Optional built-in |  |  |  |
-| External search + privacy boundary |  |  |  |
-| Bonus: tool mới do nhóm tự xây |  |  |  |
+| Bonus: meeting_room tool | `tools/meeting_room/tool.py`, `data/meeting_rooms.json`, `data/eval_meeting_room.json` | 7/10 pass (base), 3 demo scenarios PASS. Check availability, book with confirm, cancel with revoke all work. Conflict detection returns suggested slots. | Write actions (book/cancel) require confirm. Missing employee_id triggers clarify. Past-time booking not yet blocked. Multi-turn confirmation flow needs prompt improvement. |
 
 ## B6. Safety review
 

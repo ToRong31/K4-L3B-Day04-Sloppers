@@ -105,3 +105,41 @@ tools:
         asset_id: {type: string, default: "", description: "Mã tài sản nếu có"}
         confirmed: {type: boolean, default: false, description: "Đã được người dùng xác nhận"}
       required: [summary]
+
+  # ---------------- Team-built bonus tools ----------------
+  - name: meeting_room
+    description: "Quản lý phòng họp: xem lịch trống, đặt phòng, hủy đặt. Luôn cần employee_id khi book/cancel. Cần xác nhận trước khi book hoặc hủy."
+    parameters:
+      type: object
+      properties:
+        action:
+          type: string
+          enum: [check_availability, book_room, cancel_booking]
+          description: "Hành động cần thực hiện"
+        room_id:
+          type: string
+          description: "Mã phòng, ví dụ MR-301"
+        date:
+          type: string
+          description: "Ngày cần kiểm tra, format YYYY-MM-DD"
+        time_slot:
+          type: string
+          description: "Khung giờ, ví dụ 14:00-15:00"
+        capacity:
+          type: integer
+          description: "Số người tối thiểu khi tìm phòng trống"
+        employee_id:
+          type: string
+          description: "Mã nhân viên đặt/hủy phòng"
+        booking_id:
+          type: string
+          description: "Mã đặt phòng cần hủy"
+        confirmed:
+          type: boolean
+          default: false
+          description: "Đã xác nhận chưa"
+        top_k:
+          type: integer
+          default: 5
+          description: "Số kết quả trả về"
+      required: [action]
