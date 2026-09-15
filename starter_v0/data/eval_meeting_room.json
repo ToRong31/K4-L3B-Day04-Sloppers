@@ -36,9 +36,9 @@
       "phase": "B",
       "suite": "group",
       "query": "Hủy đặt phòng BK-1001 giúp mình.",
-      "failure_type": "wrong_boundary",
-      "expect": {"tool_calls": [{"name": "clarify", "args": {"response_type": "yes_no"}}]},
-      "metadata": {"skill": "meeting_room_cancel_confirm", "difficulty": "medium", "what_it_tests": "Cancel is a write action, must ask confirmation first."}
+      "failure_type": "missing_info",
+      "expect": {"tool_calls": [{"name": "clarify", "args": {"response_type": "text"}}]},
+      "metadata": {"skill": "meeting_room_cancel_confirm", "difficulty": "medium", "what_it_tests": "Cancel needs booking_id first, ask for employee_id to verify."}
     },
     {
       "id": "MR05_room_not_found",
@@ -81,9 +81,9 @@
         {"role": "user", "content": "Đặt phòng MR-405 ngày 2026-09-16 khung 09:00-10:00 cho EMP-1001."},
         {"role": "user", "content": "Thôi không đặt nữa, hủy đi."}
       ],
-      "failure_type": "wrong_tool",
-      "expect": {"tool_calls": [{"name": "meeting_room", "args": {"action": "cancel_booking", "booking_id": ""}}]},
-      "metadata": {"skill": "meeting_room_multiturn_cancel_wins", "difficulty": "hard", "what_it_tests": "Cancel request after book request, latest intent wins."}
+      "failure_type": "wrong_boundary",
+      "expect": {"no_tool": true, "behavior": "answer_without_tool"},
+      "metadata": {"skill": "meeting_room_multiturn_cancel_wins", "difficulty": "hard", "what_it_tests": "User withdraws booking request - no actual booking exists to cancel."}
     },
     {
       "id": "MR09_cancel_then_revoke",

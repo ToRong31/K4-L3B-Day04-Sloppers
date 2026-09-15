@@ -1,0 +1,18 @@
+{
+  "transcript_id": "ui_v3_openai_20260915T204604394983",
+  "source": "helpdesk_web_ui",
+  "version": "v3",
+  "artifact_version": "v3+paa5d9056c0a3+tb1ed0d256313",
+  "prompt_hash": "aa5d9056c0a315b2ca10f5c517eb2639ccfd9794a17241cc5b9bbbf9c4479812",
+  "tools_hash": "b1ed0d2563132a242c14b7991d91b5a3648796ed1249362bfec3b1fae98e20c4",
+  "provider": "openai",
+  "model": "gpt-4o-mini",
+  "system_prompt": "artifacts/system_prompt.md",
+  "tools": "artifacts/tools.yaml",
+  "history_window": 5,
+  "max_tool_rounds": 4,
+  "created_at": "2026-09-15T20:46:04",
+  "updated_at": "2026-09-15T20:46:04",
+  "redaction_policy": "Credential-like input is blocked and redacted before persistence.",
+  "turns": []
+}
