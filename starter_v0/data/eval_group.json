@@ -1,121 +1,333 @@
 {
   "dataset_id": "day04_v3_helpdesk_group",
   "dataset_role": "group",
-  "description": "Ten original IT Helpdesk cases authored by team Sloppers: exactly five single-turn and five multi-turn cases.",
+  "description": "Ten team-authored IT helpdesk cases covering five single-turn and five multi-turn tool-calling scenarios.",
   "allowed_failure_types": ["wrong_tool", "wrong_arg_value", "wrong_boundary", "unnecessary_tool", "out_of_scope", "missing_info"],
   "cases": [
     {
-      "id": "G01_printing_kb_single",
+      "id": "G01_single_room_audio_triage",
       "phase": "B",
       "suite": "group",
-      "query": "Tìm hướng dẫn nội bộ để khởi động lại hàng đợi in trên Windows.",
+      "query": "Phòng họp BKK-501 bị mất microphone. Hãy kiểm tra phần cứng thiết bị RM-501 và tìm hướng dẫn xử lý thiết bị phòng họp.",
       "failure_type": "wrong_tool",
-      "expect": {"tool_calls": [{"name": "search_kb", "args": {"category": "printing"}}]},
-      "metadata": {"turn_type": "single", "what_it_tests": "Route a printer troubleshooting how-to to the internal KB."}
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "inspect_device",
+            "args": {
+              "asset_id": "RM-501",
+              "check": "hardware"
+            }
+          },
+          {
+            "name": "search_kb",
+            "args": {
+              "category": "meeting_room"
+            }
+          }
+        ]
+      },
+      "metadata": {
+        "skill": "room_device_and_guidance",
+        "difficulty": "hard",
+        "what_it_tests": "Một sự cố phòng họp cần cả diagnostic của room asset và hướng dẫn meeting-room; không được bỏ sót một nguồn."
+      }
     },
     {
-      "id": "G02_sso_staging_single",
+      "id": "G02_single_printer_three_sources",
       "phase": "B",
       "suite": "group",
-      "query": "Kiểm tra trạng thái SSO staging hiện tại.",
-      "failure_type": "wrong_arg_value",
-      "expect": {"tool_calls": [{"name": "check_service_status", "args": {"service": "sso", "environment": "staging"}}]},
-      "metadata": {"turn_type": "single", "what_it_tests": "Preserve an explicitly supplied service and environment."}
-    },
-    {
-      "id": "G03_device_network_single",
-      "phase": "B",
-      "suite": "group",
-      "query": "Chỉ kiểm tra network của máy DT-087, không chạy kiểm tra tổng thể.",
-      "failure_type": "wrong_arg_value",
-      "expect": {"tool_calls": [{"name": "inspect_device", "args": {"asset_id": "DT-087", "check": "network"}}]},
-      "metadata": {"turn_type": "single", "what_it_tests": "Honor the requested narrow device check and explicit exclusion."}
-    },
-    {
-      "id": "G04_user_lookup_single",
-      "phase": "B",
-      "suite": "group",
-      "query": "Tra hồ sơ tài khoản và máy được cấp cho EMP-1007.",
-      "failure_type": "unnecessary_tool",
-      "expect": {"tool_calls": [{"name": "lookup_user", "args": {"employee_id": "EMP-1007"}}]},
-      "metadata": {"turn_type": "single", "what_it_tests": "Use directory lookup without an unnecessary device diagnostic."}
-    },
-    {
-      "id": "G05_external_policy_single",
-      "phase": "B",
-      "suite": "group",
-      "query": "Tra policy nội bộ về dữ liệu nào được phép gửi sang công cụ bên ngoài.",
+      "query": "Máy in PR-404 đang mất kết nối. Kiểm tra network của máy in, trạng thái printing production và tìm bài xử lý print queue.",
       "failure_type": "wrong_tool",
-      "expect": {"tool_calls": [{"name": "policy", "args": {"policy_area": "external_tools"}}]},
-      "metadata": {"turn_type": "single", "what_it_tests": "Distinguish internal policy retrieval from external web search."}
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "inspect_device",
+            "args": {
+              "asset_id": "PR-404",
+              "check": "network"
+            }
+          },
+          {
+            "name": "check_service_status",
+            "args": {
+              "service": "printing",
+              "environment": "production"
+            }
+          },
+          {
+            "name": "search_kb",
+            "args": {
+              "category": "printing"
+            }
+          }
+        ]
+      },
+      "metadata": {
+        "skill": "printer_three_source_triage",
+        "difficulty": "hard",
+        "what_it_tests": "Triage máy in phải tách device network, shared printing status và knowledge-base guidance thành ba tool calls."
+      }
     },
     {
-      "id": "G06_asset_correction_multi",
+      "id": "G03_single_two_shared_services",
       "phase": "B",
       "suite": "group",
-      "turns": [
-        {"role": "user", "content": "Kiểm tra hardware máy LT-204."},
-        {"role": "user", "content": "Mã vừa rồi sai, đổi sang DT-031."},
-        {"role": "user", "content": "Tiếp tục đúng loại kiểm tra hardware trên mã mới."}
-      ],
+      "query": "Kiểm tra đồng thời email production và SSO production; chỉ xem trạng thái hai dịch vụ dùng chung.",
       "failure_type": "wrong_arg_value",
-      "expect": {"tool_calls": [{"name": "inspect_device", "args": {"asset_id": "DT-031", "check": "hardware"}}]},
-      "metadata": {"turn_type": "multi", "what_it_tests": "Replace a stale asset ID while carrying the requested check."}
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "check_service_status",
+            "args": {
+              "service": "email",
+              "environment": "production"
+            }
+          },
+          {
+            "name": "check_service_status",
+            "args": {
+              "service": "sso",
+              "environment": "production"
+            }
+          }
+        ]
+      },
+      "metadata": {
+        "skill": "two_services_same_environment",
+        "difficulty": "hard",
+        "what_it_tests": "Cùng một status tool phải được gọi hai lần cho hai service khác nhau, đều giữ environment=production."
+      }
     },
     {
-      "id": "G07_environment_carry_multi",
+      "id": "G04_single_security_guidance_and_policy",
+      "phase": "B",
+      "suite": "group",
+      "query": "Cho tôi hướng dẫn về disk encryption và tra policy data privacy về việc ghi recovery key trong transcript.",
+      "failure_type": "wrong_tool",
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "search_kb",
+            "args": {
+              "category": "security"
+            }
+          },
+          {
+            "name": "policy",
+            "args": {
+              "policy_area": "data_privacy"
+            }
+          }
+        ]
+      },
+      "metadata": {
+        "skill": "security_kb_and_privacy_policy",
+        "difficulty": "hard",
+        "what_it_tests": "Phân biệt hướng dẫn kỹ thuật trong KB với quy định dữ liệu trong policy và lấy đủ cả hai nguồn."
+      }
+    },
+    {
+      "id": "G05_single_unsupported_service_restart",
+      "phase": "B",
+      "suite": "group",
+      "query": "Không cần kiểm tra trạng thái hay đưa hướng dẫn. Hãy trực tiếp khởi động lại dịch vụ email production ngay bây giờ.",
+      "failure_type": "wrong_boundary",
+      "expect": {
+        "no_tool": true,
+        "behavior": "refuse_unsupported_action"
+      },
+      "metadata": {
+        "skill": "unsupported_state_change",
+        "difficulty": "hard",
+        "what_it_tests": "Agent không được giả lập thao tác restart hoặc gọi tool đọc khi người dùng chỉ yêu cầu một action không được khai báo."
+      }
+    },
+    {
+      "id": "G06_multi_fill_user_and_asset",
       "phase": "B",
       "suite": "group",
       "turns": [
-        {"role": "user", "content": "Kiểm tra Wi-Fi production."},
-        {"role": "user", "content": "Đổi dịch vụ cần xem sang printing."},
-        {"role": "user", "content": "Giữ nguyên môi trường đã nói và chỉ xem status."}
+        {
+          "role": "user",
+          "content": "Tôi cần kiểm tra tài khoản và thiết bị của một nhân viên."
+        },
+        {
+          "role": "user",
+          "content": "Nhân viên là EMP-1002, máy là LT-240."
+        },
+        {
+          "role": "user",
+          "content": "Tra tài khoản người đó và kiểm tra riêng security trên đúng máy; làm cả hai."
+        }
       ],
-      "failure_type": "wrong_arg_value",
-      "expect": {"tool_calls": [{"name": "check_service_status", "args": {"service": "printing", "environment": "production"}}]},
-      "metadata": {"turn_type": "multi", "what_it_tests": "Carry environment while replacing the service and latest intent."}
+      "failure_type": "missing_info",
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "lookup_user",
+            "args": {
+              "employee_id": "EMP-1002"
+            }
+          },
+          {
+            "name": "inspect_device",
+            "args": {
+              "asset_id": "LT-240",
+              "check": "security"
+            }
+          }
+        ]
+      },
+      "metadata": {
+        "skill": "multiturn_fill_two_identifiers",
+        "difficulty": "hard",
+        "what_it_tests": "Carry employee ID và asset ID từ lượt giữa rồi thực hiện hai intent được chốt ở lượt cuối."
+      }
     },
     {
-      "id": "G08_confirmed_ticket_multi",
+      "id": "G07_multi_external_to_internal_switch",
       "phase": "B",
       "suite": "group",
       "turns": [
-        {"role": "user", "content": "Soạn ticket lỗi Outlook trên LT-204, priority medium."},
-        {"role": "user", "content": "Nội dung và mức ưu tiên đó đều đúng."},
-        {"role": "user", "content": "Tôi xác nhận tạo ticket với đúng payload vừa nêu."}
+        {
+          "role": "user",
+          "content": "Tìm driver Dell Latitude 7440 trên web."
+        },
+        {
+          "role": "user",
+          "content": "Thôi không gửi gì ra web; máy nội bộ là LT-240."
+        },
+        {
+          "role": "user",
+          "content": "Chỉ kiểm tra software snapshot của LT-240, không tìm web."
+        }
+      ],
+      "failure_type": "wrong_tool",
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "inspect_device",
+            "args": {
+              "asset_id": "LT-240",
+              "check": "software"
+            }
+          }
+        ]
+      },
+      "metadata": {
+        "skill": "multiturn_external_to_internal",
+        "difficulty": "hard",
+        "what_it_tests": "Intent mới hủy external search và chuyển sang internal inspection; không được gọi stale search_device_info."
+      }
+    },
+    {
+      "id": "G08_multi_cancel_after_confirmation",
+      "phase": "B",
+      "suite": "group",
+      "turns": [
+        {
+          "role": "user",
+          "content": "Tạo ticket low cho máy in PR-404 bị mất kết nối."
+        },
+        {
+          "role": "user",
+          "content": "Tôi xác nhận đúng summary, priority low và asset PR-404."
+        },
+        {
+          "role": "user",
+          "content": "Dừng lại, tôi hủy xác nhận và không muốn tạo ticket hay gọi tool nào."
+        }
       ],
       "failure_type": "wrong_boundary",
-      "expect": {"tool_calls": [{"name": "create_ticket", "args": {"asset_id": "LT-204", "priority": "medium", "confirmed": true}}]},
-      "metadata": {"turn_type": "multi", "what_it_tests": "Execute a write only after explicit confirmation of the unchanged payload."}
+      "expect": {
+        "no_tool": true,
+        "behavior": "acknowledge_cancel"
+      },
+      "metadata": {
+        "skill": "multiturn_cancel_confirmed_action",
+        "difficulty": "adversarial",
+        "what_it_tests": "Lệnh hủy mới nhất phải vô hiệu confirmation ngay trước đó và ngăn mọi action/tool call."
+      }
     },
     {
-      "id": "G09_cancel_ticket_multi",
+      "id": "G09_multi_format_accumulated_findings",
       "phase": "B",
       "suite": "group",
       "turns": [
-        {"role": "user", "content": "Chuẩn bị ticket lỗi Wi-Fi cho LT-240."},
-        {"role": "user", "content": "Thôi hủy yêu cầu ticket."},
-        {"role": "user", "content": "Chỉ xác nhận là bạn sẽ không tạo dữ liệu nào."}
+        {
+          "role": "user",
+          "content": "Finding thứ nhất: RM-501 có microphone pod bên phải bị ngắt kết nối."
+        },
+        {
+          "role": "user",
+          "content": "Finding thứ hai: calendar sync chậm 8 phút."
+        },
+        {
+          "role": "user",
+          "content": "Chỉ format hai finding thành báo cáo brief tên 'BKK-501 room audio'; không kiểm tra hay tìm thêm."
+        }
       ],
       "failure_type": "unnecessary_tool",
-      "expect": {"no_tool": true, "behavior": "acknowledge_cancellation"},
-      "metadata": {"turn_type": "multi", "what_it_tests": "A cancellation removes the stale write action."}
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "format_incident_report",
+            "args": {
+              "template": "brief",
+              "incident_title": "BKK-501 room audio"
+            }
+          }
+        ]
+      },
+      "metadata": {
+        "skill": "multiturn_format_without_refetch",
+        "difficulty": "hard",
+        "what_it_tests": "Carry findings từ các lượt trước và chỉ format ở lượt cuối; extra inspection hoặc search phải fail."
+      }
     },
     {
-      "id": "G10_parallel_user_device_multi",
+      "id": "G10_multi_selective_environment_revision",
       "phase": "B",
       "suite": "group",
       "turns": [
-        {"role": "user", "content": "Tôi cần xem tài khoản EMP-1009."},
-        {"role": "user", "content": "Máy liên quan là DT-087."},
-        {"role": "user", "content": "Tra tài khoản đó và kiểm tra security của đúng máy vừa nêu."}
+        {
+          "role": "user",
+          "content": "Kiểm tra email và SSO, cả hai ở production."
+        },
+        {
+          "role": "user",
+          "content": "Đổi riêng email sang staging; SSO vẫn giữ production."
+        },
+        {
+          "role": "user",
+          "content": "Kiểm tra đúng hai dịch vụ với hai môi trường vừa chốt."
+        }
       ],
-      "failure_type": "wrong_tool",
-      "expect": {"tool_calls": [
-        {"name": "lookup_user", "args": {"employee_id": "EMP-1009"}},
-        {"name": "inspect_device", "args": {"asset_id": "DT-087", "check": "security"}}
-      ]},
-      "metadata": {"turn_type": "multi", "what_it_tests": "Carry two independent identifiers and call both required sources."}
+      "failure_type": "wrong_arg_value",
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "check_service_status",
+            "args": {
+              "service": "email",
+              "environment": "staging"
+            }
+          },
+          {
+            "name": "check_service_status",
+            "args": {
+              "service": "sso",
+              "environment": "production"
+            }
+          }
+        ]
+      },
+      "metadata": {
+        "skill": "multiturn_selective_argument_revision",
+        "difficulty": "hard",
+        "what_it_tests": "Chỉ sửa environment của email trong khi giữ nguyên environment của SSO và vẫn tạo đủ hai calls."
+      }
     }
   ]
 }
