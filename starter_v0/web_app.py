@@ -72,6 +72,13 @@ QUICK_ACTIONS = [
         "prompt": "Kiểm tra các CVE và security advisory công khai cho Lenovo ThinkPad T14 Gen 4, BIOS version 1.35.",
     },
     {
+        "id": "meeting-room",
+        "icon": "meeting",
+        "title": "Đặt phòng họp",
+        "description": "Xem lịch & đặt phòng họp",
+        "prompt": "Xem các phòng họp trống vào ngày 2026-09-16 cho 5 người.",
+    },
+    {
         "id": "ticket",
         "icon": "ticket",
         "title": "Tạo ticket",
